@@ -1,0 +1,13 @@
+C:\projects\hw16\bin\Debug\netcoreapp3.1\MRain.exe
+C:\projects\hw16\bin\Debug\netcoreapp3.1\MRain.deps.json
+C:\projects\hw16\bin\Debug\netcoreapp3.1\MRain.runtimeconfig.json
+C:\projects\hw16\bin\Debug\netcoreapp3.1\MRain.runtimeconfig.dev.json
+C:\projects\hw16\bin\Debug\netcoreapp3.1\MRain.dll
+C:\projects\hw16\bin\Debug\netcoreapp3.1\MRain.pdb
+C:\projects\hw16\obj\Debug\netcoreapp3.1\MRain.csprojAssemblyReference.cache
+C:\projects\hw16\obj\Debug\netcoreapp3.1\MRain.csproj.CoreCompileInputs.cache
+C:\projects\hw16\obj\Debug\netcoreapp3.1\MRain.AssemblyInfoInputs.cache
+C:\projects\hw16\obj\Debug\netcoreapp3.1\MRain.AssemblyInfo.cs
+C:\projects\hw16\obj\Debug\netcoreapp3.1\MRain.dll
+C:\projects\hw16\obj\Debug\netcoreapp3.1\MRain.pdb
+C:\projects\hw16\obj\Debug\netcoreapp3.1\MRain.genruntimeconfig.cache
