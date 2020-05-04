@@ -12,7 +12,7 @@ namespace MRain
         static int InitRow;
         static int InitColumn;
         static object locker = new object(), locker1 = new object();
-        static int currectpos = 0;
+        static bool currentstatus = true;
         static void Main(string[] args)
         {
             Random randomheight = new Random();
@@ -22,16 +22,17 @@ namespace MRain
             InitColumn = Console.CursorLeft;
             InitRow = Console.CursorTop;
             Task[] tasks = new Task[10];
+
             for (int j = 0; j < tasks.Length; j++)
             {
                 object k = 2*j;
-                 int letterstreamheight = randomheight.Next(5,8); //длина потока букв
+                 int letterstreamheight = randomheight.Next(8,10); //длина потока букв
                 tasks[j] = Task.Factory.StartNew(() =>{ 
                     while (true)
-                    {   
-                        WriteStream(k,letterstreamheight,0,(int)height / 2-2);
+                    { 
+                        while (currentstatus)  
+                            WriteStream(k,8,0,(int)height / 2-2);
                         WriteStreamAsync(k,letterstreamheight,(int)height / 2-2, height);
-
                     }
                 });
             }
@@ -42,6 +43,12 @@ namespace MRain
             for (int i = 0; i < SingleColumn.Length; i++)
                 SingleColumn[i] = ' ';
         }
+        public static void CleanColumn(int b, int e)
+        {
+            for (int i = b; i < e; i++)
+                SingleColumn[i] = ' ';
+
+        }
 
         //вывод символа:
         public static void WriteAt(char letter, object p)
@@ -49,8 +56,6 @@ namespace MRain
             Point point = p as Point;
                 Console.SetCursorPosition(InitColumn + point.col, InitRow + point.row);
                 Console.Write(letter);
-
-           
         }
         //вывод столбца
         public static void WriteList(int column, int prelast, int last)
@@ -63,7 +68,7 @@ namespace MRain
                 Point point = new Point(column,i);
                 WriteAt(SingleColumn[i], point);
             }
-            Thread.Sleep(50);   
+            Thread.Sleep(200);   
         }
         //вывод цепочки({переписывать лист + показывать лист} - н раз)
         public static void WriteStream(object column, int letterstreamheight, int start, int finish)
@@ -74,9 +79,8 @@ namespace MRain
             int i, beginpos, endpos;
             point.col = (int)column;
       
-            for (i = start; i < finish; i++)
+            for (i = start; i <= finish + letterstreamheight; i++)
             {
-                currectpos = i;
                 int last = 0, prelast = 0;
                 lock(locker) {
                 beginpos = (i <= letterstreamheight) ? start : i - letterstreamheight;
@@ -89,7 +93,9 @@ namespace MRain
                 prelast = point.row + endpos - 2;
                 last = point.row + endpos - 1;
                 WriteList((int) column, prelast, last);
-                CleanColumn();
+                CleanColumn(start, finish);
+                if (i == finish)
+                    currentstatus = false;
                 }
             }
         }
@@ -98,7 +104,7 @@ namespace MRain
         {
             await Task.Run(() => 
             {
-                Random randomletter = new Random();
+            Random randomletter = new Random();
             Random randomheight = new Random();
             Point point = new Point(0,0);
             int i, beginpos, endpos;
@@ -106,7 +112,6 @@ namespace MRain
       
             for (i = start; i <= finish + letterstreamheight; i++)
             {
-                currectpos = i;
                 int last = 0, prelast = 0;
                 lock(locker) {
                 beginpos = (i <= letterstreamheight) ? start : i - letterstreamheight;
@@ -119,7 +124,7 @@ namespace MRain
                 prelast = point.row + endpos - 2;
                 last = point.row + endpos - 1;
                 WriteList((int) column, prelast, last);
-                CleanColumn();
+                CleanColumn(start, finish);
                 }
             }
             });
