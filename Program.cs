@@ -2,7 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic; 
-
+/*Самыи трудным в модификации матрицы-дождя было придумать как сделать так, 
+чтобы одновременно по отдной строке бежали две строки друг за другом.
+Данную проблему я решила разделением этих событий на 2 функции, причём одна из них была асинхронной.
+Первая функция TopStream позволяла первой в очереди капле появиться испускаться до середины и всё, 
+вторая же функция DownStreamAsync позволяла этой эе капле пройти оставшийся путь до 
+самого низа и изчезнуть. Вторая функция асихронная так как дойдя до середины, нужно чтобы программа 
+пустила на вход свехру вторую каплю, при этом не дожидаясь пока первая капля не дойдёт до низу.
+*/
 namespace MRain
 {
     class Program
@@ -124,75 +131,6 @@ namespace MRain
             }
             });
         }
-      /*  public static async void TopStreamAsync(object column, int letterstreamheight, int start, int finish)
-        {
-            await Task.Run(() => 
-            {
-            Random randomletter = new Random();
-            Random randomheight = new Random();
-            Point point = new Point(0,0);
-            int i, firstletterpos, lastletterpos;
-            point.col = (int)column;
-      
-
-            for (i = start; i <= finish+letterstreamheight; i++)
-            {
-               int last = 0, prelast = 0;
-                lock(locker) {
-                firstletterpos = (i <= letterstreamheight) ? start : i - letterstreamheight;
-                lastletterpos = (i <= finish)? i : finish;
-                    for (int letterpos = firstletterpos; letterpos < lastletterpos; letterpos++)
-    
-                    {       
-    
-                        char letter = Convert.ToChar(randomletter.Next(65,90));
-                        SingleColumn[point.row + letterpos] = letter; 
-                    }
-                prelast = point.row + lastletterpos - 2;
-                last = point.row + lastletterpos - 1;
-                WriteList(
-                    (int) column, prelast, last);
-                if (i =
-                = finish) DownStreamAsync(column, letterstreamheight, finish, height);
-                CleanColumn(start, finish);
-                }
-            } });
-        }
-        //ассинхронный метод для вывода оставшейся цепочки
-         public static async void DownStreamAsync(object column, int letterstreamheight, int start, int finish)
-        {
-            await Task.Run(() => 
-            {
-            Random randomletter = new Random();
-            Random randomheight = new Random();
-            Point point = new Point(0,0);
-            int i, firstletterpos, lastletterpos;
-            point.col = (int)column;
-      
-
-            for (i = start; i <= finish + letterstreamheight; i++)
-            {
-                int last = 0, prelast = 0;
-                lock(locker) {
-                firstletterpos = (i <= letterstreamheight) ? start : i - letterstreamheight;
-                lastletterpos = (i <= finish)? i : finish;
-                    for (int letterpos = firstletterpos; letterpos < lastletterpos; letterpos++)
-    
-                    {       
-    
-                        char letter = Convert.ToChar(randomletter.Next(65,90));
-                        SingleColumn[point.row + letterpos] = letter; 
-                    }
-                prelast = point.row + lastletterpos - 2;
-                last = point.row + lastletterpos - 1;
-                WriteList(
-                    (int) column, prelast, last);
-                CleanCo
-                lumn(start, finish);
-                }
-            }
-            });
-        }*/    
     }
 }
 
