@@ -16,26 +16,21 @@ namespace MRain
         static void Main(string[] args)
         {
             Random randomheight = new Random();
-            CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
-            CancellationToken token = cancelTokenSource.Token;
             CleanColumn();
+            int mid = (int)height/2 - 1;
             InitColumn = Console.CursorLeft;
             InitRow = Console.CursorTop;
-            Task[] tasks = new Task[2];
+            Task[] tasks = new Task[5];
 
             for (int j = 0; j < tasks.Length; j++)
             {
-                object k = 2*j;
-                int letterstreamheight = randomheight.Next(4, 7); //длина потока букв
+                object k = 4*j;
+                int letterstreamheight = randomheight.Next(5, 8); //длина потока букв
                 tasks[j] = Task.Factory.StartNew(() =>{ 
                     while (true)
                     { 
-                        TopStream(k,5,0,(int)height/2-1);
-                       // while (currentstatus)  
-                       // TopStreamAsync(k,letterstreamheight,0,(int)height / 2);
-                       // currentstatus = true;
-                       // TopStreamAsyncAsync(k,letterstreamheight,(int)height / 2, height);
-
+                        TopStream(k, letterstreamheight, 0, mid+2);
+                        DownStreamAsync(k, letterstreamheight, mid+2-letterstreamheight, height-1);
                     }
                 });
             }
@@ -71,7 +66,7 @@ namespace MRain
                 Point point = new Point(column,i);
                 WriteAt(SingleColumn[i], point);
             }
-            Thread.Sleep(1000);   
+            Thread.Sleep(30);   
         }
         //вывод цепочки({переписывать лист + показывать лист} - н раз)
         public static void TopStream(object column, int letterstreamheight, int beginpos,int endpos)
@@ -82,12 +77,12 @@ namespace MRain
             int i, firstletterpos = 0, lastletterpos = 0;
             point.col = (int)column;
             
-            for (i = beginpos; i <= endpos; i++)
+            for (i = beginpos; i < endpos; i++)
             {
                 int last = 0, prelast = 0;
                 lock(locker) {
                     firstletterpos = (i <= letterstreamheight) ? beginpos : i - letterstreamheight;
-                    lastletterpos = (i <= endpos)? i : endpos;
+                    lastletterpos = (i  <= endpos)? i : endpos;
                     for (int letterpos = firstletterpos; letterpos < lastletterpos; letterpos++)
                     {         
                         char letter = Convert.ToChar(randomletter.Next(65,90));
@@ -99,6 +94,35 @@ namespace MRain
                 CleanColumn(beginpos, endpos);
                 }
             }
+        }
+        public static async void DownStreamAsync(object column, int letterstreamheight, int beginpos,int endpos)
+        {
+            await Task.Run(() => 
+            {
+            Random randomletter = new Random();
+            Random randomheight = new Random();
+            Point point = new Point(0,0);
+            int i, firstletterpos = 0, lastletterpos = 0;
+            point.col = (int)column;
+            
+            for (i = beginpos; i < endpos; i++)
+            {
+                int last = 0, prelast = 0;
+                lock(locker) {
+                    firstletterpos = i;
+                    lastletterpos = (i+letterstreamheight < endpos)? i+letterstreamheight : endpos;
+                    for (int letterpos = firstletterpos; letterpos < lastletterpos; letterpos++)
+                    {         
+                        char letter = Convert.ToChar(randomletter.Next(65,90));
+                        SingleColumn[point.row + letterpos] = letter; 
+                    }
+                prelast = point.row + lastletterpos - 2;
+                last = point.row + lastletterpos - 1;
+                WriteList((int) column, prelast, last);
+                CleanColumn(beginpos, endpos);
+                }
+            }
+            });
         }
       /*  public static async void TopStreamAsync(object column, int letterstreamheight, int start, int finish)
         {
